@@ -1,4 +1,3 @@
-# PEMROGRAMAN
 #include <iostream>
 #include <cctype>
 #include <algorithm>
@@ -235,7 +234,7 @@ void nilaiMaksMin() {
 }
 
 void mainmenu() {
-    string inputmainmenu;  // Ubah ke string untuk handle "2b" jika perlu, tapi sekarang pakai "4"
+    char pilihan;  // Ubah dari string ke char untuk switch-case
     cout << endl;
     cout << "==MAIN MENU==" << endl;
     cout << "1. Input data mahasiswa" << endl;
@@ -245,25 +244,33 @@ void mainmenu() {
     cout << "5. Tampilkan mahasiswa nilai tertinggi & terendah" << endl;
     cout << "0. Keluar" << endl;
     cout << "Masukkan pilihan : ";
-    cin >> inputmainmenu;
+    cin >> pilihan;
 
-    if (inputmainmenu == "1") {
-        datamahasiswa();
-    } else if (inputmainmenu == "2") {
-        tampilkandata();
-    } else if (inputmainmenu == "3") {
-        string niuInput = cekNIU();  
-        BinarySearch(jumlaharr, niuInput);
-    } else if (inputmainmenu == "4") {
-        tampilkanDataSortedRata();
-    } else if (inputmainmenu == "5") {
-        nilaiMaksMin();
-    } else if (inputmainmenu == "0") {
-        cout << "Keluar..." << endl;
-        return;
-    } else {
-        cout << "Input salah." << endl;
-        mainmenu();
+    switch (pilihan) {
+        case '1':
+            datamahasiswa();
+            break;
+        case '2':
+            tampilkandata();
+            break;
+        case '3': {
+            string niuInput = cekNIU();  
+            BinarySearch(jumlaharr, niuInput);
+            break;
+        }
+        case '4':
+            tampilkanDataSortedRata();
+            break;
+        case '5':
+            nilaiMaksMin();
+            break;
+        case '0':
+            cout << "Keluar..." << endl;
+            return;
+        default:
+            cout << "Input salah." << endl;
+            mainmenu();
+            break;
     }
     cout << endl;
 }
