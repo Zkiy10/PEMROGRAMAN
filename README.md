@@ -16,15 +16,17 @@ struct Mahasiswa {
     float tugas, uts, uas, rata;
 };
 
-Mahasiswa dataMhs[100];
+Mahasiswa dataMhs[100];  // Array utama, urut berdasarkan NIU
+Mahasiswa dataSortedRata[100];  // Array baru, urut berdasarkan rata-rata descending
 int jumlaharr = 0;
 
 void mainmenu();
-void insertionSort();
+void insertionSort(Mahasiswa arr[], int n);  // Sort berdasarkan NIU
+void bubbleSortRata(Mahasiswa arr[], int n);  // Sort berdasarkan rata-rata
 void datamahasiswa();
 void tampilkandata();
+void tampilkanDataSortedRata();
 void BinarySearch(int jumlaharr, string target);
-void sortRata();
 void nilaiMaksMin();
 
 // Fungsi hitung rata-rata
@@ -91,27 +93,46 @@ void datamahasiswa() {
         // Hitung rata-rata
         dataMhs[jumlaharr].rata = hitungRata(dataMhs[jumlaharr].tugas, dataMhs[jumlaharr].uts, dataMhs[jumlaharr].uas);
         
+        // Salin ke array dataSortedRata
+        dataSortedRata[jumlaharr] = dataMhs[jumlaharr];
+        
         jumlaharr++;
     }
-    insertionSort();
+    
+    // Sort dataMhs berdasarkan NIU
+    insertionSort(dataMhs, jumlaharr);
+    
+    // Sort dataSortedRata berdasarkan rata-rata descending
+    bubbleSortRata(dataSortedRata, jumlaharr);
     
     string s = "/";
     for (int i = 0; i < jumlaharr; i++) {
         dataMhs[i].nim = dataMhs[i].tahunmasuk + s + dataMhs[i].niu + s + dataMhs[i].kodefakultas + s + dataMhs[i].nif;
+        dataSortedRata[i].nim = dataSortedRata[i].tahunmasuk + s + dataSortedRata[i].niu + s + dataSortedRata[i].kodefakultas + s + dataSortedRata[i].nif;
     }
     mainmenu();
 }
 
-void insertionSort() {
-    for (int i = 1; i < jumlaharr; i++) {
-        Mahasiswa key = dataMhs[i];
+void insertionSort(Mahasiswa arr[], int n) {
+    for (int i = 1; i < n; i++) {
+        Mahasiswa key = arr[i];
         int j = i - 1;
 
-        while (j >= 0 && dataMhs[j].niu > key.niu) {
-            dataMhs[j + 1] = dataMhs[j];
+        while (j >= 0 && arr[j].niu > key.niu) {
+            arr[j + 1] = arr[j];
             j--;
         }
-        dataMhs[j + 1] = key;
+        arr[j + 1] = key;
+    }
+}
+
+void bubbleSortRata(Mahasiswa arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j].rata < arr[j + 1].rata) {
+                swap(arr[j], arr[j + 1]);
+            }
+        }
     }
 }
 
@@ -122,6 +143,7 @@ void tampilkandata() {
         return;
     }  
         
+    cout << "\n=== DATA MAHASISWA (URUT BERDASARKAN NIU) ===\n";
     for (int i = 0; i < jumlaharr; i++) {
         cout << "Mahasiswa ke-" << i + 1 << endl;
         cout << "Nama   : " << dataMhs[i].nama << endl;
@@ -131,6 +153,27 @@ void tampilkandata() {
         cout << "UTS    : " << dataMhs[i].uts << endl;
         cout << "UAS    : " << dataMhs[i].uas << endl;
         cout << "Rata-rata : " << dataMhs[i].rata << endl << endl;
+    }
+    mainmenu();
+}
+
+void tampilkanDataSortedRata() {
+    if (jumlaharr == 0) {
+        cout << "Belum ada data mahasiswa yang tersimpan." << endl;
+        mainmenu();
+        return;
+    }
+    
+    cout << "\n=== DATA MAHASISWA (URUT BERDASARKAN RATA-RATA DESCENDING) ===\n";
+    for (int i = 0; i < jumlaharr; i++) {
+        cout << "Mahasiswa ke-" << i + 1 << endl;
+        cout << "Nama   : " << dataSortedRata[i].nama << endl;
+        cout << "NIM    : " << dataSortedRata[i].nim << endl;
+        cout << "Prodi  : " << dataSortedRata[i].prodi << endl;
+        cout << "Tugas  : " << dataSortedRata[i].tugas << endl;
+        cout << "UTS    : " << dataSortedRata[i].uts << endl;
+        cout << "UAS    : " << dataSortedRata[i].uas << endl;
+        cout << "Rata-rata : " << dataSortedRata[i].rata << endl << endl;
     }
     mainmenu();
 }
@@ -168,18 +211,6 @@ void BinarySearch(int jumlaharr, string target) {
     mainmenu();
 }
 
-void sortRata() {
-    for (int i = 0; i < jumlaharr - 1; i++) {
-        for (int j = 0; j < jumlaharr - i - 1; j++) {
-            if (dataMhs[j].rata < dataMhs[j + 1].rata) {
-                swap(dataMhs[j], dataMhs[j + 1]);
-            }
-        }
-    }
-    cout << "\nData berhasil diurutkan berdasarkan rata-rata nilai (descending).\n";
-    mainmenu();
-}
-
 void nilaiMaksMin() {
     if (jumlaharr == 0) {
         cout << "Belum ada data mahasiswa." << endl;
@@ -189,62 +220,50 @@ void nilaiMaksMin() {
     
     int idxMax = 0, idxMin = 0;
     for (int i = 1; i < jumlaharr; i++) {
-        if (dataMhs[i].rata > dataMhs[idxMax].rata) idxMax = i;
-        if (dataMhs[i].rata < dataMhs[idxMin].rata) idxMin = i;
+        if (dataSortedRata[i].rata > dataSortedRata[idxMax].rata) idxMax = i;
+        if (dataSortedRata[i].rata < dataSortedRata[idxMin].rata) idxMin = i;
     }
 
     cout << "\n=== NILAI TERTINGGI ===\n";
-    cout << "Nama  : " << dataMhs[idxMax].nama << endl;
-    cout << "Rata  : " << dataMhs[idxMax].rata << endl;
+    cout << "Nama  : " << dataSortedRata[idxMax].nama << endl;
+    cout << "Rata  : " << dataSortedRata[idxMax].rata << endl;
 
     cout << "\n=== NILAI TERENDAH ===\n";
-    cout << "Nama  : " << dataMhs[idxMin].nama << endl;
-    cout << "Rata  : " << dataMhs[idxMin].rata << endl;
+    cout << "Nama  : " << dataSortedRata[idxMin].nama << endl;
+    cout << "Rata  : " << dataSortedRata[idxMin].rata << endl;
     mainmenu();
 }
 
 void mainmenu() {
-    char inputmainmenu;
+    string inputmainmenu;  // Ubah ke string untuk handle "2b" jika perlu, tapi sekarang pakai "4"
     cout << endl;
     cout << "==MAIN MENU==" << endl;
     cout << "1. Input data mahasiswa" << endl;
     cout << "2. Tampilkan semua data mahasiswa (urut berdasarkan NIU)" << endl;
     cout << "3. Search data mahasiswa (berdasarkan NIU)" << endl;
-    cout << "4. Sorting berdasarkan rata-rata nilai" << endl;
+    cout << "4. Tampilkan data mahasiswa (urut berdasarkan rata-rata)" << endl;
     cout << "5. Tampilkan mahasiswa nilai tertinggi & terendah" << endl;
     cout << "0. Keluar" << endl;
     cout << "Masukkan pilihan : ";
     cin >> inputmainmenu;
 
-    switch (inputmainmenu) {
-        case '1': {
-            datamahasiswa();
-            break;
-        }
-        case '2': {
-            tampilkandata();
-            break;
-        }
-        case '3': {
-            string niuInput = cekNIU();  
-            BinarySearch(jumlaharr, niuInput);
-            break;
-        }
-        case '4': {
-            sortRata();
-            break;
-        }
-        case '5': {
-            nilaiMaksMin();
-            break;
-        }
-        case '0':
-            cout << "Keluar..." << endl;
-            return;
-        default:
-            cout << "Input salah." << endl;
-            mainmenu();
-            break;
+    if (inputmainmenu == "1") {
+        datamahasiswa();
+    } else if (inputmainmenu == "2") {
+        tampilkandata();
+    } else if (inputmainmenu == "3") {
+        string niuInput = cekNIU();  
+        BinarySearch(jumlaharr, niuInput);
+    } else if (inputmainmenu == "4") {
+        tampilkanDataSortedRata();
+    } else if (inputmainmenu == "5") {
+        nilaiMaksMin();
+    } else if (inputmainmenu == "0") {
+        cout << "Keluar..." << endl;
+        return;
+    } else {
+        cout << "Input salah." << endl;
+        mainmenu();
     }
     cout << endl;
 }
